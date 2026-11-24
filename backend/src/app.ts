@@ -2,12 +2,14 @@ import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import { pinoHttp } from 'pino-http';
+import swaggerUi from 'swagger-ui-express';
 import { env } from './config/env';
 import { logger } from './lib/logger';
 import { requestId } from './middleware/request-id';
 import { errorHandler, notFound } from './middleware/error-handler';
 import { healthRouter } from './modules/health.routes';
 import { apiRouter } from './routes';
+import { buildOpenApiDocument } from './docs/openapi';
 
 export function createApp() {
   const app = express();
@@ -41,6 +43,29 @@ export function createApp() {
 
   app.use(healthRouter);
   app.use('/api/v1', apiRouter);
+
+  // Under /api so the web app's nginx forwards them too. Built once at start-up from the same zod schemas that
+  // validate requests.
+  if (env.API_DOCS_ENABLED) {
+    const document = buildOpenApiDocument();
+    app.get('/api/openapi.json', (_req, res) => {
+      res.json(document);
+    });
+    app.use(
+      '/api/docs',
+      swaggerUi.serve,
+      swaggerUi.setup(document, {
+        customSiteTitle: 'Outlet HQ API',
+        swaggerOptions: {
+          persistAuthorization: true,
+          displayRequestDuration: true,
+          docExpansion: 'list',
+          defaultModelsExpandDepth: 0,
+          filter: true,
+        },
+      }),
+    );
+  }
 
   app.use(notFound);
   app.use(errorHandler);

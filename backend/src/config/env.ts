@@ -29,11 +29,13 @@ const schema = z.object({
     ),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
   // Proxy hops in front of the API (a load balancer, nginx): makes req.ip the client for rate limits.
+  TRUST_PROXY_HOPS: z.coerce.number().int().min(0).max(5).default(1),
   // Sign-in attempts per client address per minute (raise it only for automated end-to-end runs).
   LOGIN_RATE_LIMIT_PER_MINUTE: z.coerce.number().int().min(1).max(10_000).default(10),
-  TRUST_PROXY_HOPS: z.coerce.number().int().min(0).max(5).default(1),
   RUN_MIGRATIONS: booleanFromString.default('false'),
   SEED_DEMO_DATA: booleanFromString.default('false'),
+  // Swagger UI at /api/docs and the OpenAPI document at /api/openapi.json.
+  API_DOCS_ENABLED: booleanFromString.default('true'),
 });
 
 export type Env = z.infer<typeof schema>;

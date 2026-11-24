@@ -35,6 +35,7 @@ services:
       TRUST_PROXY_HOPS: 1
       RUN_MIGRATIONS: 'true'
       LOGIN_RATE_LIMIT_PER_MINUTE: ${LOGIN_RATE_LIMIT_PER_MINUTE:-10}
+      API_DOCS_ENABLED: ${API_DOCS_ENABLED:-true}
       SEED_DEMO_DATA: ${SEED_DEMO_DATA:-false}
     ports:
       - '${API_PORT:-3000}:3000'

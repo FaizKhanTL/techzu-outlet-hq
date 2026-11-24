@@ -18,6 +18,7 @@ describe('parseEnv', () => {
       SEED_DEMO_DATA: false,
       TRUST_PROXY_HOPS: 1,
       LOGIN_RATE_LIMIT_PER_MINUTE: 10,
+      API_DOCS_ENABLED: true,
     });
   });
 
@@ -66,6 +67,10 @@ describe('parseEnv', () => {
         /LOGIN_RATE_LIMIT_PER_MINUTE/,
       );
     }
+  });
+
+  it('turns the API docs off with API_DOCS_ENABLED=false', () => {
+    expect(parseEnv({ ...minimal, API_DOCS_ENABLED: 'false' }).API_DOCS_ENABLED).toBe(false);
   });
 
   it('refuses a boolean that is not one', () => {
