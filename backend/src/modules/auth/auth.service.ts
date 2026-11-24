@@ -1,4 +1,5 @@
 import { pool } from '../../db/pool';
+import { env } from '../../config/env';
 import { UnauthorizedError } from '../../lib/errors';
 import { findUserByEmail, findUserById, type UserRecord } from './auth.repository';
 import { DUMMY_HASH_PROMISE, verifyPassword } from './password';
@@ -20,6 +21,8 @@ export const publicUser = (user: UserRecord) => ({
   fullName: user.fullName,
   role: user.role,
   outletId: user.outletId,
+  // The deployment's currency, so a client formats every *_cents value without its own setting.
+  currency: env.CURRENCY,
 });
 
 export async function login(email: string, password: string) {
