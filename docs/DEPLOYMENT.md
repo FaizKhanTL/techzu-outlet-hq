@@ -14,7 +14,7 @@ railway add --service api \
   --variables 'NODE_ENV=production' --variables 'PORT=3000' \
   --variables 'DATABASE_URL=${{Postgres.DATABASE_URL}}' \
   --variables "JWT_SECRET=$(openssl rand -hex 32)" \
-  --variables 'CURRENCY=MYR' --variables 'RUN_MIGRATIONS=true' --variables 'SEED_DEMO_DATA=true' \
+  --variables 'CURRENCY=SGD' --variables 'RUN_MIGRATIONS=true' --variables 'SEED_DEMO_DATA=true' \
   --variables 'DATABASE_POOL_MAX=5' --variables 'TRUST_PROXY_HOPS=3'
 railway add --service web --variables 'PORT=8080' --variables 'API_UPSTREAM=http://api.railway.internal:3000'
 # Move the database next to the API. The trial plan allows one region per service, so also set the region it was

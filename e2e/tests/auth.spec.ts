@@ -7,7 +7,7 @@ test.describe('sign-in and access', () => {
   }) => {
     await page.goto('/outlet/inventory');
     await expect(page).toHaveURL(/\/login$/);
-    await page.getByLabel('Email').fill(DEMO.klcc);
+    await page.getByLabel('Email').fill(DEMO.orchard);
     await page.getByLabel('Password').fill(DEMO.password);
     await page.getByRole('button', { name: 'Sign in' }).click();
     await expect(page).toHaveURL(/\/outlet\/inventory$/);
@@ -24,7 +24,7 @@ test.describe('sign-in and access', () => {
   });
 
   test('each role lands on its own home and is kept out of the other one', async ({ page }) => {
-    await signIn(page, DEMO.klcc);
+    await signIn(page, DEMO.orchard);
     await expect(page).toHaveURL(/\/outlet\/pos$/);
     await page.goto('/hq/menu');
     await expect(page).toHaveURL(/\/outlet\/pos$/);
@@ -37,7 +37,7 @@ test.describe('sign-in and access', () => {
   });
 
   test('the session survives a reload and ends on sign-out', async ({ page }) => {
-    await signIn(page, DEMO.klcc);
+    await signIn(page, DEMO.orchard);
     await page.reload();
     await expect(page.getByRole('heading', { name: 'Point of sale' })).toBeVisible();
     await page.getByRole('button', { name: 'Sign out' }).click();

@@ -79,9 +79,9 @@ Every demo account uses the password `Password123!`. The login page has buttons 
 | Role | Email | Outlet |
 |---|---|---|
 | HQ admin | `hq@example.com` | all |
-| Outlet staff | `klcc.staff@example.com` | KLCC Flagship |
-| Outlet staff | `pj.staff@example.com` | Petaling Jaya |
-| Outlet staff | `penang.staff@example.com` | Penang Gurney |
+| Outlet staff | `orchard.staff@example.com` | Orchard Flagship |
+| Outlet staff | `marina.staff@example.com` | Marina Bay |
+| Outlet staff | `tampines.staff@example.com` | Tampines Hub |
 
 These are demo credentials. For a real deployment set `SEED_DEMO_DATA=false` and create real users.
 
@@ -212,13 +212,13 @@ curl -X POST http://localhost:3000/api/v1/outlets/$OUTLET_ID/sales \
 {
   "data": {
     "id": "6f0c…",
-    "receiptNumber": "KLCC-000012",
+    "receiptNumber": "ORCHARD-000012",
     "receiptSeq": 12,
-    "totalCents": 2600,
+    "totalCents": 1400,
     "itemCount": 2,
     "paymentMethod": "CARD",
-    "currency": "MYR",
-    "items": [{ "menuItemId": "…", "sku": "COF-LATTE", "name": "Cafe Latte", "unitPriceCents": 1300, "quantity": 2, "lineTotalCents": 2600 }],
+    "currency": "SGD",
+    "items": [{ "menuItemId": "…", "sku": "COF-LATTE", "name": "Cafe Latte", "unitPriceCents": 700, "quantity": 2, "lineTotalCents": 1400 }],
     "createdAt": "2026-11-24T10:15:00.000Z"
   }
 }

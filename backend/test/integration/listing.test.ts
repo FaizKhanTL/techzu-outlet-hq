@@ -79,16 +79,16 @@ describe('lists, filters and pages', () => {
 
   it('searches outlets and menu items, and filters by status', async () => {
     const hq = await createUser('HQ_ADMIN');
-    await createOutlet(hq.token, { code: 'KLCC', name: 'KLCC Flagship' });
-    const pj = await createOutlet(hq.token, { code: 'PJ', name: 'Petaling Jaya' });
-    await api().patch(`/api/v1/outlets/${pj.id}`).set(auth(hq.token)).send({ isActive: false });
+    await createOutlet(hq.token, { code: 'ORCHARD', name: 'Orchard Flagship' });
+    const marina = await createOutlet(hq.token, { code: 'MARINA', name: 'Marina Bay' });
+    await api().patch(`/api/v1/outlets/${marina.id}`).set(auth(hq.token)).send({ isActive: false });
     await createMenuItem(hq.token, { sku: 'COF-LATTE', name: 'Cafe Latte', category: 'Coffee' });
     await createMenuItem(hq.token, { sku: 'TEA-1', name: 'Teh Tarik', category: 'Tea' });
 
     const byName = await api().get('/api/v1/outlets?search=flag').set(auth(hq.token));
-    expect(byName.body.data.map((o: { code: string }) => o.code)).toEqual(['KLCC']);
+    expect(byName.body.data.map((o: { code: string }) => o.code)).toEqual(['ORCHARD']);
     const inactive = await api().get('/api/v1/outlets?isActive=false').set(auth(hq.token));
-    expect(inactive.body.data.map((o: { code: string }) => o.code)).toEqual(['PJ']);
+    expect(inactive.body.data.map((o: { code: string }) => o.code)).toEqual(['MARINA']);
     const latte = await api().get('/api/v1/menu-items?search=latte').set(auth(hq.token));
     expect(latte.body.data.map((m: { sku: string }) => m.sku)).toEqual(['COF-LATTE']);
     // A % in the search is a literal character, not a wildcard that matches everything.

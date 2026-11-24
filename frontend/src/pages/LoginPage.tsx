@@ -5,9 +5,9 @@ import { ErrorBox } from '../components/ui';
 
 const DEMO_ACCOUNTS = [
   { label: 'HQ admin', email: 'hq@example.com' },
-  { label: 'KLCC staff', email: 'klcc.staff@example.com' },
-  { label: 'PJ staff', email: 'pj.staff@example.com' },
-  { label: 'Penang staff', email: 'penang.staff@example.com' },
+  { label: 'Orchard staff', email: 'orchard.staff@example.com' },
+  { label: 'Marina Bay staff', email: 'marina.staff@example.com' },
+  { label: 'Tampines staff', email: 'tampines.staff@example.com' },
 ];
 
 export function LoginPage() {

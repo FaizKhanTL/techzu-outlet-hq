@@ -90,11 +90,15 @@ describe('stock adjustment body', () => {
 
 describe('outlet and menu bodies', () => {
   it('normalises an outlet code to upper case and trims names', () => {
-    const parsed = createOutletSchemas.body.safeParse({ code: ' klcc-2 ', name: '  KLCC  ' });
-    expect(parsed.success && parsed.data).toEqual({ code: 'KLCC-2', name: 'KLCC', address: null });
+    const parsed = createOutletSchemas.body.safeParse({ code: ' orchard-2 ', name: '  Orchard  ' });
+    expect(parsed.success && parsed.data).toEqual({
+      code: 'ORCHARD-2',
+      name: 'Orchard',
+      address: null,
+    });
   });
 
-  it.each(['k', '-KLCC', 'KL CC', 'A'.repeat(17), 'KLCC!'])(
+  it.each(['k', '-ORCHARD', 'ORC HARD', 'A'.repeat(17), 'ORCHARD!'])(
     'refuses the outlet code %j',
     (code) => {
       expect(createOutletSchemas.body.safeParse({ code, name: 'x' }).success).toBe(false);

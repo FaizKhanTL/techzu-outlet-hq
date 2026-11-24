@@ -34,9 +34,9 @@ describe('LoginPage', () => {
   it('fills a demo account from its button', () => {
     renderLogin();
     fireEvent.click(screen.getByText('Demo accounts'));
-    fireEvent.click(screen.getByRole('button', { name: 'KLCC staff' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Orchard staff' }));
     expect((screen.getByLabelText('Email') as HTMLInputElement).value).toBe(
-      'klcc.staff@example.com',
+      'orchard.staff@example.com',
     );
     expect((screen.getByLabelText('Password') as HTMLInputElement).value).toBe('Password123!');
   });

@@ -76,11 +76,11 @@ describe('hashSaleRequest', () => {
 
 describe('formatReceiptNumber', () => {
   it('pads the number to six digits after the outlet code', () => {
-    expect(formatReceiptNumber('KLCC', 1)).toBe('KLCC-000001');
-    expect(formatReceiptNumber('PJ', 123456)).toBe('PJ-123456');
+    expect(formatReceiptNumber('ORCHARD', 1)).toBe('ORCHARD-000001');
+    expect(formatReceiptNumber('MARINA', 123456)).toBe('MARINA-123456');
   });
 
   it('keeps counting past six digits instead of wrapping', () => {
-    expect(formatReceiptNumber('PJ', 1234567)).toBe('PJ-1234567');
+    expect(formatReceiptNumber('MARINA', 1234567)).toBe('MARINA-1234567');
   });
 });

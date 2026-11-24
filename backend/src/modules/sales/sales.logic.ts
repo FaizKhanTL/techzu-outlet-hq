@@ -41,6 +41,6 @@ export function hashSaleRequest(
     .digest('hex');
 }
 
-/** `KLCC-000042`: the outlet code and the per-outlet number, padded so receipts sort as text. */
+/** `ORCHARD-000042`: the outlet code and the per-outlet number, padded so receipts sort as text. */
 export const formatReceiptNumber = (outletCode: string, seq: number) =>
   `${outletCode}-${String(seq).padStart(6, '0')}`;

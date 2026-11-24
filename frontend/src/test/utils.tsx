@@ -8,11 +8,11 @@ import type { User } from '../api/types';
 
 export const staffUser: User = {
   id: 'user-1',
-  email: 'klcc.staff@example.com',
-  fullName: 'KLCC Staff',
+  email: 'orchard.staff@example.com',
+  fullName: 'Orchard Flagship Staff',
   role: 'OUTLET_STAFF',
   outletId: 'outlet-1',
-  currency: 'MYR',
+  currency: 'SGD',
 };
 
 /** Renders with a fresh query cache, a router and (optionally) a signed-in user. */

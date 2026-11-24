@@ -11,7 +11,7 @@ const cents = z.number().int().min(0).openapi({ description: 'Integer minor unit
 const currency = z
   .string()
   .regex(/^[A-Z]{3}$/)
-  .openapi({ description: 'ISO 4217 code of every `*Cents` value', example: 'MYR' });
+  .openapi({ description: 'ISO 4217 code of every `*Cents` value', example: 'SGD' });
 
 export const ErrorSchema = z
   .object({
@@ -74,8 +74,8 @@ export const OutletSchema = z
     id: uuid,
     code: z
       .string()
-      .openapi({ example: 'KLCC', description: 'Printed on receipts; cannot change' }),
-    name: z.string().openapi({ example: 'KLCC Flagship' }),
+      .openapi({ example: 'ORCHARD', description: 'Printed on receipts; cannot change' }),
+    name: z.string().openapi({ example: 'Orchard Flagship' }),
     address: z.string().nullable(),
     isActive: z.boolean(),
     createdAt: timestamp,
@@ -184,7 +184,7 @@ export const SaleSchema = z
       .int()
       .min(1)
       .openapi({ description: 'Sequential and gap-free per outlet' }),
-    receiptNumber: z.string().openapi({ example: 'KLCC-000012' }),
+    receiptNumber: z.string().openapi({ example: 'ORCHARD-000012' }),
     totalCents: cents,
     itemCount: z.number().int().min(1),
     paymentMethod: z.enum(['CASH', 'CARD', 'E_WALLET']),

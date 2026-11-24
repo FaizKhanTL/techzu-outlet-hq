@@ -11,7 +11,7 @@ describe('parseEnv', () => {
     expect(parseEnv(minimal)).toMatchObject({
       NODE_ENV: 'development',
       PORT: 3000,
-      CURRENCY: 'MYR',
+      CURRENCY: 'SGD',
       JWT_EXPIRES_IN: '8h',
       CORS_ORIGINS: [],
       RUN_MIGRATIONS: false,
@@ -39,7 +39,7 @@ describe('parseEnv', () => {
     try {
       parseEnv({
         JWT_SECRET: 'short',
-        CURRENCY: 'ringgit',
+        CURRENCY: 'dollar',
         PORT: '70000',
         JWT_EXPIRES_IN: 'forever',
       });

@@ -17,7 +17,7 @@ const schema = z.object({
   CURRENCY: z
     .string()
     .regex(/^[A-Z]{3}$/, 'CURRENCY must be a three-letter ISO 4217 code')
-    .default('MYR'),
+    .default('SGD'),
   CORS_ORIGINS: z
     .string()
     .default('')

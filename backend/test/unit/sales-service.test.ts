@@ -37,8 +37,8 @@ const staff: AuthContext = {
 };
 const outlet = {
   id: OUTLET,
-  code: 'KLCC',
-  name: 'KLCC',
+  code: 'ORCHARD',
+  name: 'Orchard Flagship',
   address: null,
   isActive: true,
   createdAt: new Date(),
@@ -101,14 +101,14 @@ describe('createSale', () => {
       ]),
     );
     expect(replayed).toBe(false);
-    expect(sale).toMatchObject({ id: 'sale-1', currency: 'MYR' });
+    expect(sale).toMatchObject({ id: 'sale-1', currency: 'SGD' });
 
     expect(inventory.lockStock).toHaveBeenCalledWith({}, OUTLET, [LATTE, TEA]);
     expect(sales.insertSale).toHaveBeenCalledWith(
       {},
       expect.objectContaining({
         receiptSeq: 42,
-        receiptNumber: 'KLCC-000042',
+        receiptNumber: 'ORCHARD-000042',
         totalCents: 1300 + 3 * 600,
         itemCount: 4,
         createdBy: 'staff-1',
@@ -245,11 +245,11 @@ describe('createSale', () => {
     it('returns the earlier sale for the same request without recording another', async () => {
       vi.mocked(sales.findSaleByIdempotencyKey).mockResolvedValue({
         id: 'old',
-        receiptNumber: 'KLCC-000001',
+        receiptNumber: 'ORCHARD-000001',
         requestHash: hash,
       } as never);
       const result = await createSale(staff, OUTLET, input(lines), 'key-12345678');
-      expect(result).toMatchObject({ replayed: true, sale: { id: 'old', currency: 'MYR' } });
+      expect(result).toMatchObject({ replayed: true, sale: { id: 'old', currency: 'SGD' } });
       expect(result.sale).not.toHaveProperty('requestHash');
       expect(inventory.lockStock).not.toHaveBeenCalled();
     });
@@ -257,13 +257,13 @@ describe('createSale', () => {
     it('refuses the key for a different request', async () => {
       vi.mocked(sales.findSaleByIdempotencyKey).mockResolvedValue({
         id: 'old',
-        receiptNumber: 'KLCC-000001',
+        receiptNumber: 'ORCHARD-000001',
         requestHash: 'other',
       } as never);
       expect(await caught(createSale(staff, OUTLET, input(lines), 'key-12345678'))).toMatchObject({
         status: 409,
         code: 'IDEMPOTENCY_KEY_REUSED',
-        details: { receiptNumber: 'KLCC-000001' },
+        details: { receiptNumber: 'ORCHARD-000001' },
       });
     });
 
@@ -280,7 +280,7 @@ describe('createSale', () => {
         .mockResolvedValueOnce(undefined)
         .mockResolvedValueOnce({
           id: 'winner',
-          receiptNumber: 'KLCC-000007',
+          receiptNumber: 'ORCHARD-000007',
           requestHash: hash,
         } as never);
       vi.mocked(sales.insertSale).mockRejectedValueOnce(

@@ -188,9 +188,9 @@ export const operations: Operation[] = [
     access: 'hq',
     request: {
       body: json(createOutletSchemas.body, {
-        code: 'MV',
-        name: 'Mid Valley',
-        address: 'Lingkaran Syed Putra, Kuala Lumpur',
+        code: 'JEWEL',
+        name: 'Jewel Changi',
+        address: '78 Airport Boulevard, #B1-201, Singapore 819666',
       }),
     },
     responses: {
@@ -224,7 +224,7 @@ export const operations: Operation[] = [
     access: 'hq',
     request: {
       params: updateOutletSchemas.params,
-      body: json(updateOutletSchemas.body, { name: 'KLCC Flagship', isActive: true }),
+      body: json(updateOutletSchemas.body, { name: 'Orchard Flagship', isActive: true }),
     },
     responses: {
       200: { description: 'Updated', schema: dataOf(OutletSchema) },
@@ -262,7 +262,7 @@ export const operations: Operation[] = [
         name: 'Mocha',
         category: 'Coffee',
         description: 'Espresso, chocolate and steamed milk',
-        basePriceCents: 1450,
+        basePriceCents: 720,
       }),
     },
     responses: {
@@ -300,7 +300,7 @@ export const operations: Operation[] = [
     access: 'hq',
     request: {
       params: updateMenuItemSchemas.params,
-      body: json(updateMenuItemSchemas.body, { basePriceCents: 1350 }),
+      body: json(updateMenuItemSchemas.body, { basePriceCents: 680 }),
     },
     responses: {
       200: { description: 'Updated', schema: dataOf(MenuItemSchema) },
@@ -339,7 +339,7 @@ export const operations: Operation[] = [
     access: 'hq',
     request: {
       params: assignSchemas.params,
-      body: json(assignSchemas.body, { priceOverrideCents: 1400, isAvailable: true }),
+      body: json(assignSchemas.body, { priceOverrideCents: 750, isAvailable: true }),
     },
     responses: {
       200: {
@@ -615,7 +615,7 @@ const DESCRIPTION = `
 The API of Outlet HQ: one company, many F&B outlets. HQ owns the master menu, assigns items to outlets (with an
 optional outlet price) and reads reports; each outlet sells only what it was assigned and keeps its own stock.
 
-**Authentication.** Call \`POST /auth/login\` (demo: \`hq@example.com\` or \`klcc.staff@example.com\`, password
+**Authentication.** Call \`POST /auth/login\` (demo: \`hq@example.com\` or \`orchard.staff@example.com\`, password
 \`Password123!\`), then press **Authorize** and paste the \`token\`. HQ admins may use every outlet; outlet staff
 only their own.
 

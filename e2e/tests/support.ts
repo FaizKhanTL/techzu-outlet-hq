@@ -5,8 +5,8 @@ import { randomUUID } from 'node:crypto';
 export const DEMO = {
   password: 'Password123!',
   hq: 'hq@example.com',
-  klcc: 'klcc.staff@example.com',
-  pj: 'pj.staff@example.com',
+  orchard: 'orchard.staff@example.com',
+  marina: 'marina.staff@example.com',
 };
 
 /** A value no earlier run used, so the tests can run again on the same database. */

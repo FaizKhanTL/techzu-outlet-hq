@@ -25,21 +25,21 @@ test.describe('the deployed stack', () => {
 
   test('records a retried sale once', async ({ request }) => {
     const hq = await Api.as(request, DEMO.hq);
-    const klcc = await hq.outletIdByCode('KLCC');
-    const item = await hq.stockedItem(klcc, { name: 'Retry test', stock: 5 });
+    const orchard = await hq.outletIdByCode('ORCHARD');
+    const item = await hq.stockedItem(orchard, { name: 'Retry test', stock: 5 });
     const key = randomUUID();
     const body = { items: [{ menuItemId: item.id, quantity: 1 }], paymentMethod: 'CASH' };
-    const first = await hq.call<{ id: string }>('POST', `/outlets/${klcc}/sales`, body, {
+    const first = await hq.call<{ id: string }>('POST', `/outlets/${orchard}/sales`, body, {
       'Idempotency-Key': key,
     });
-    const retry = await hq.call<{ id: string }>('POST', `/outlets/${klcc}/sales`, body, {
+    const retry = await hq.call<{ id: string }>('POST', `/outlets/${orchard}/sales`, body, {
       'Idempotency-Key': key,
     });
     expect([first.status, retry.status]).toEqual([201, 200]);
     expect(retry.body.data.id).toBe(first.body.data.id);
     const stock = await hq.call<{ menuItemId: string; quantity: number }[]>(
       'GET',
-      `/outlets/${klcc}/inventory`,
+      `/outlets/${orchard}/inventory`,
     );
     expect(stock.body.data.find((row) => row.menuItemId === item.id)?.quantity).toBe(4);
   });

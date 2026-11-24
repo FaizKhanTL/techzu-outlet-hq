@@ -11,11 +11,11 @@ describe('outlets', () => {
     const created = await api()
       .post('/api/v1/outlets')
       .set(auth(hq.token))
-      .send({ code: ' klcc ', name: ' KLCC Flagship ', address: '' });
+      .send({ code: ' orchard ', name: ' Orchard Flagship ', address: '' });
     expect(created.status).toBe(201);
     expect(created.body.data).toMatchObject({
-      code: 'KLCC',
-      name: 'KLCC Flagship',
+      code: 'ORCHARD',
+      name: 'Orchard Flagship',
       address: null,
       isActive: true,
     });
@@ -25,7 +25,7 @@ describe('outlets', () => {
       .patch(`/api/v1/outlets/${id}`)
       .set(auth(hq.token))
       .send({ address: 'Level 1' });
-    expect(updated.body.data).toMatchObject({ name: 'KLCC Flagship', address: 'Level 1' });
+    expect(updated.body.data).toMatchObject({ name: 'Orchard Flagship', address: 'Level 1' });
 
     const cleared = await api()
       .patch(`/api/v1/outlets/${id}`)
@@ -33,7 +33,7 @@ describe('outlets', () => {
       .send({ address: null });
     expect(cleared.body.data.address).toBeNull();
 
-    await createOutlet(hq.token, { code: 'PJ' });
+    await createOutlet(hq.token, { code: 'MARINA' });
     const list = await api().get('/api/v1/outlets?limit=1').set(auth(hq.token));
     expect(list.body.meta).toEqual({ limit: 1, offset: 0, total: 2 });
     expect(list.body.data).toHaveLength(1);
@@ -41,11 +41,11 @@ describe('outlets', () => {
 
   it('refuses a duplicate or malformed code', async () => {
     const hq = await createUser('HQ_ADMIN');
-    await createOutlet(hq.token, { code: 'KLCC' });
+    await createOutlet(hq.token, { code: 'ORCHARD' });
     const dup = await api()
       .post('/api/v1/outlets')
       .set(auth(hq.token))
-      .send({ code: 'klcc', name: 'Again' });
+      .send({ code: 'orchard', name: 'Again' });
     expect(dup.status).toBe(409);
     expect(dup.body.error.code).toBe('OUTLET_CODE_TAKEN');
 

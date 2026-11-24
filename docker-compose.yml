@@ -29,7 +29,7 @@ services:
       PORT: 3000
       DATABASE_URL: postgres://${POSTGRES_USER:-outlet_hq}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-outlet_hq}
       JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
-      CURRENCY: ${CURRENCY:-MYR}
+      CURRENCY: ${CURRENCY:-SGD}
       LOG_LEVEL: info
       # One proxy (the web container's nginx) sits in front.
       TRUST_PROXY_HOPS: 1

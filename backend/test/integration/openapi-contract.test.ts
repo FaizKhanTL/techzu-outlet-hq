@@ -86,12 +86,15 @@ describe('the API answers as documented', () => {
       await api()
         .post('/api/v1/outlets')
         .set(auth(hq.token))
-        .send({ code: 'MV', name: 'Mid Valley', address: 'KL' }),
+        .send({ code: 'JEWEL', name: 'Jewel Changi', address: 'Changi' }),
       'post',
       '/outlets',
     );
     conforms(
-      await api().post('/api/v1/outlets').set(auth(hq.token)).send({ code: 'MV', name: 'Again' }),
+      await api()
+        .post('/api/v1/outlets')
+        .set(auth(hq.token))
+        .send({ code: 'JEWEL', name: 'Again' }),
       'post',
       '/outlets',
       'OUTLET_CODE_TAKEN',

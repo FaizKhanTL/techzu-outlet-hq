@@ -32,7 +32,7 @@ function OutletForm({ outlet, onDone }: { outlet?: Outlet; onDone: () => void })
           required
           pattern="[A-Za-z0-9][A-Za-z0-9-]{1,15}"
           title="2-16 letters, digits or dashes"
-          placeholder="KLCC"
+          placeholder="ORCHARD"
         />
       </label>
       <label>

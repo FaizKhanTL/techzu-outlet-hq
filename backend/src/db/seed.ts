@@ -11,48 +11,53 @@ import type { AuthContext } from '../modules/auth/auth.types';
 export const DEMO_PASSWORD = 'Password123!';
 
 const OUTLETS = [
-  { code: 'KLCC', name: 'KLCC Flagship', address: 'Lot 101, Suria KLCC, Kuala Lumpur' },
-  { code: 'PJ', name: 'Petaling Jaya', address: '1 Jalan SS2/24, Petaling Jaya' },
-  { code: 'PENANG', name: 'Penang Gurney', address: 'Gurney Plaza, George Town, Penang' },
+  {
+    code: 'ORCHARD',
+    name: 'Orchard Flagship',
+    address: '2 Orchard Turn, #B2-01, Singapore 238801',
+  },
+  { code: 'MARINA', name: 'Marina Bay', address: '10 Bayfront Avenue, #01-12, Singapore 018956' },
+  { code: 'TAMPINES', name: 'Tampines Hub', address: '1 Tampines Walk, #01-21, Singapore 528523' },
 ];
 
+// Prices in SGD cents.
 const MENU = [
-  { sku: 'COF-AMERICANO', name: 'Americano', category: 'Coffee', basePriceCents: 900 },
-  { sku: 'COF-LATTE', name: 'Cafe Latte', category: 'Coffee', basePriceCents: 1200 },
-  { sku: 'COF-CAPPUCCINO', name: 'Cappuccino', category: 'Coffee', basePriceCents: 1200 },
-  { sku: 'COF-MOCHA', name: 'Mocha', category: 'Coffee', basePriceCents: 1400 },
-  { sku: 'TEA-TEH-TARIK', name: 'Teh Tarik', category: 'Tea', basePriceCents: 600 },
-  { sku: 'TEA-MATCHA', name: 'Matcha Latte', category: 'Tea', basePriceCents: 1500 },
-  { sku: 'FOOD-NASI-LEMAK', name: 'Nasi Lemak Ayam', category: 'Food', basePriceCents: 1800 },
-  { sku: 'FOOD-SANDWICH', name: 'Chicken Sandwich', category: 'Food', basePriceCents: 1600 },
-  { sku: 'FOOD-CROISSANT', name: 'Butter Croissant', category: 'Food', basePriceCents: 800 },
-  { sku: 'DES-CHEESECAKE', name: 'Burnt Cheesecake', category: 'Dessert', basePriceCents: 1700 },
+  { sku: 'COF-AMERICANO', name: 'Americano', category: 'Coffee', basePriceCents: 550 },
+  { sku: 'COF-LATTE', name: 'Cafe Latte', category: 'Coffee', basePriceCents: 650 },
+  { sku: 'COF-CAPPUCCINO', name: 'Cappuccino', category: 'Coffee', basePriceCents: 650 },
+  { sku: 'COF-MOCHA', name: 'Mocha', category: 'Coffee', basePriceCents: 700 },
+  { sku: 'TEA-TEH-TARIK', name: 'Teh Tarik', category: 'Tea', basePriceCents: 350 },
+  { sku: 'TEA-MATCHA', name: 'Matcha Latte', category: 'Tea', basePriceCents: 750 },
+  { sku: 'FOOD-KAYA-TOAST', name: 'Kaya Toast Set', category: 'Food', basePriceCents: 580 },
+  { sku: 'FOOD-SANDWICH', name: 'Chicken Sandwich', category: 'Food', basePriceCents: 950 },
+  { sku: 'FOOD-CROISSANT', name: 'Butter Croissant', category: 'Food', basePriceCents: 480 },
+  { sku: 'DES-CHEESECAKE', name: 'Burnt Cheesecake', category: 'Dessert', basePriceCents: 890 },
 ];
 
 // Which outlet sells which SKU, and at what price when it differs from the master price.
 const ASSIGNMENTS: Record<string, Record<string, number | null>> = {
-  KLCC: {
-    'COF-AMERICANO': 1000,
-    'COF-LATTE': 1300,
-    'COF-CAPPUCCINO': 1300,
+  ORCHARD: {
+    'COF-AMERICANO': 600,
+    'COF-LATTE': 700,
+    'COF-CAPPUCCINO': 700,
     'COF-MOCHA': null,
     'TEA-TEH-TARIK': null,
-    'TEA-MATCHA': 1600,
-    'FOOD-NASI-LEMAK': 2000,
+    'TEA-MATCHA': 800,
+    'FOOD-KAYA-TOAST': 620,
     'FOOD-CROISSANT': null,
-    'DES-CHEESECAKE': 1800,
+    'DES-CHEESECAKE': 950,
   },
-  PJ: {
+  MARINA: {
     'COF-AMERICANO': null,
     'COF-LATTE': null,
-    'TEA-TEH-TARIK': 550,
-    'FOOD-NASI-LEMAK': null,
+    'TEA-TEH-TARIK': 380,
+    'FOOD-KAYA-TOAST': null,
     'FOOD-SANDWICH': null,
     'FOOD-CROISSANT': null,
   },
-  PENANG: {
+  TAMPINES: {
     'COF-AMERICANO': null,
-    'COF-LATTE': 1150,
+    'COF-LATTE': 600,
     'COF-MOCHA': null,
     'TEA-TEH-TARIK': null,
     'TEA-MATCHA': null,

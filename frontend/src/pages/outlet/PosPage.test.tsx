@@ -35,13 +35,13 @@ const sale = {
   id: 's1',
   outletId: 'outlet-1',
   receiptSeq: 7,
-  receiptNumber: 'KLCC-000007',
+  receiptNumber: 'ORCHARD-000007',
   totalCents: 3200,
   itemCount: 3,
   paymentMethod: 'CARD',
   note: null,
   createdAt: '2026-11-24T10:00:00.000Z',
-  currency: 'MYR',
+  currency: 'SGD',
   items: [],
 };
 
@@ -97,7 +97,7 @@ describe('PosPage', () => {
     fireEvent.click(screen.getByRole('radio', { name: 'Card' }));
     fireEvent.click(screen.getByRole('button', { name: 'Charge' }));
 
-    expect(await screen.findByText('KLCC-000007')).toBeTruthy();
+    expect(await screen.findByText('ORCHARD-000007')).toBeTruthy();
     const post = calls.find((call) => call.method === 'POST')!;
     expect(post.path).toBe('/outlets/outlet-1/sales');
     expect(post.body).toEqual({
@@ -128,7 +128,7 @@ describe('PosPage', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Charge' }));
     expect((await screen.findByRole('alert')).textContent).toBe('Please retry.');
     fireEvent.click(screen.getByRole('button', { name: 'Charge' }));
-    await screen.findByText('KLCC-000007');
+    await screen.findByText('ORCHARD-000007');
 
     const keys = calls
       .filter((call) => call.method === 'POST')

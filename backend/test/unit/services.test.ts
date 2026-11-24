@@ -172,7 +172,7 @@ describe('reports service', () => {
       { outletId: B, saleCount: 0, itemsSold: 0, revenueCents: 0 },
     ] as never);
     expect(await reports.revenueByOutlet({})).toMatchObject({
-      currency: 'MYR',
+      currency: 'SGD',
       from: null,
       to: null,
       totals: { saleCount: 2, itemsSold: 5, revenueCents: 1500 },

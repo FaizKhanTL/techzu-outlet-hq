@@ -261,7 +261,7 @@ therefore about reliability, report speed and room to grow, not raw throughput.
 
 The per-outlet receipt counter is the one serialisation point by design (it is what makes numbers gap-free). It is
 held for a few milliseconds per sale, which supports hundreds of sales a second per outlet. If an outlet ever needs
-more, or terminals need to number receipts offline, number per terminal (`KLCC-T2-000123`), as in section 7.
+more, or terminals need to number receipts offline, number per terminal (`ORCHARD-T2-000123`), as in section 7.
 
 ### 5.2 Reporting
 
@@ -353,7 +353,7 @@ flowchart LR
   number, write the sale and an **outbox** entry. Ids are UUIDs (v7 for time order), generated locally.
 - **Receipt numbers stay sequential per outlet** because the hub is the outlet's single numbering authority while
   offline: it holds the counter. HQ accepts the numbers the hub assigned (still unique per outlet). Without a hub,
-  terminals number per terminal (`KLCC-T2-000123`) so two terminals can never collide.
+  terminals number per terminal (`ORCHARD-T2-000123`) so two terminals can never collide.
 - **Stock** is per outlet, and only that outlet sells it, so the hub can be the authority for sale deductions while
   offline. HQ's adjustments (restock, waste) are sent as **deltas**, which commute, so no update is lost when both
   sides changed stock.

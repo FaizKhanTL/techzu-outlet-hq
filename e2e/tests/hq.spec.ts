@@ -26,7 +26,7 @@ test.describe('HQ console', () => {
     await expect(page.locator('tr', { hasText: sku })).toContainText('12.50');
 
     await page.getByRole('link', { name: 'Outlets' }).click();
-    await page.getByRole('link', { name: 'KLCC', exact: true }).click();
+    await page.getByRole('link', { name: 'ORCHARD', exact: true }).click();
     await page.getByRole('button', { name: 'Assign menu item' }).click();
     const assign = page.getByRole('dialog', { name: 'Assign a menu item' });
     await assign.getByLabel('Menu item').selectOption({ label: `E2E · ${name} (12.50)` });
@@ -47,7 +47,7 @@ test.describe('HQ console', () => {
 
     // The outlet's own staff, in a separate session, sell it at the outlet price.
     const staff = await browser.newPage();
-    await signIn(staff, DEMO.klcc);
+    await signIn(staff, DEMO.orchard);
     await expect(tile(staff, name)).toContainText('14.00');
     await tile(staff, name).click();
     await staff.getByRole('button', { name: 'Charge' }).click();
@@ -59,10 +59,10 @@ test.describe('HQ console', () => {
 
     // The item can be paused from HQ, and the outlet price cleared back to the master price.
     const hq = await Api.as(request, DEMO.hq);
-    const klcc = await hq.outletIdByCode('KLCC');
+    const orchard = await hq.outletIdByCode('ORCHARD');
     const menu = await hq.call<{ name: string; menuItemId: string }[]>(
       'GET',
-      `/outlets/${klcc}/menu-items`,
+      `/outlets/${orchard}/menu-items`,
     );
     const assigned = menu.body.data.find((item) => item.name === name)!;
     await page.locator('tr', { hasText: name }).getByRole('button', { name: 'Price' }).click();
@@ -72,7 +72,7 @@ test.describe('HQ console', () => {
     await expect(page.locator('tr', { hasText: name })).toContainText('12.50');
     const after = await hq.call<{ priceOverrideCents: number | null }[]>(
       'GET',
-      `/outlets/${klcc}/menu-items`,
+      `/outlets/${orchard}/menu-items`,
     );
     expect(
       after.body.data.find(
@@ -113,29 +113,29 @@ test.describe('HQ console', () => {
     request,
   }) => {
     const hq = await Api.as(request, DEMO.hq);
-    const pj = await hq.outletIdByCode('PJ');
-    // One more than PJ's best seller so far, so it ranks first however many runs came before.
+    const marina = await hq.outletIdByCode('MARINA');
+    // One more than Marina Bay's best seller so far, so it ranks first however many runs came before.
     const before = await hq.call<{ outlets: { items: { quantitySold: number }[] }[] }>(
       'GET',
-      `/reports/top-items?outletId=${pj}&limit=1`,
+      `/reports/top-items?outletId=${marina}&limit=1`,
     );
     const quantity = Number(before.body.data.outlets[0]?.items[0]?.quantitySold ?? 0) + 1;
     const name = unique('Bestseller');
-    const item = await hq.stockedItem(pj, { name, basePriceCents: 100, stock: quantity });
+    const item = await hq.stockedItem(marina, { name, basePriceCents: 100, stock: quantity });
     // A sale line holds at most 999 units.
     for (let left = quantity; left > 0; left -= 999) {
-      const sale = await hq.sell(pj, [{ menuItemId: item.id, quantity: Math.min(left, 999) }]);
+      const sale = await hq.sell(marina, [{ menuItemId: item.id, quantity: Math.min(left, 999) }]);
       expect(sale.status).toBe(201);
     }
 
     await signIn(page, DEMO.hq);
-    const pjRow = page.locator('tbody tr', { hasText: 'Petaling Jaya' }).first();
-    await expect(pjRow).toBeVisible();
-    const pjCard = page.locator('section.card', {
-      has: page.getByRole('heading', { name: /Petaling Jaya/ }),
+    const marinaRow = page.locator('tbody tr', { hasText: 'Marina Bay' }).first();
+    await expect(marinaRow).toBeVisible();
+    const marinaCard = page.locator('section.card', {
+      has: page.getByRole('heading', { name: /Marina Bay/ }),
     });
-    await expect(pjCard.locator('tbody tr').first()).toContainText(name);
-    await expect(pjCard.locator('tbody tr').first()).toContainText(String(quantity));
+    await expect(marinaCard.locator('tbody tr').first()).toContainText(name);
+    await expect(marinaCard.locator('tbody tr').first()).toContainText(String(quantity));
 
     // A date range before any sale shows nothing.
     await page.getByLabel('From').fill('2000-01-01');

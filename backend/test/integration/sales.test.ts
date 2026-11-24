@@ -48,7 +48,7 @@ describe('sales', () => {
       totalCents: 2 * 1250 + 3 * 600,
       itemCount: 5,
       paymentMethod: 'CASH',
-      currency: 'MYR',
+      currency: 'SGD',
     });
     expect(res.body.data.items).toEqual(
       expect.arrayContaining([

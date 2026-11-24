@@ -16,7 +16,7 @@ describe('money', () => {
   });
 
   it('formats cents and round-trips the edit value', () => {
-    expect(formatMoney(1250, 'MYR', 'en-MY')).toContain('12.50');
+    expect(formatMoney(1250, 'SGD', 'en-SG')).toContain('12.50');
     expect(centsToInput(1250)).toBe('12.50');
     expect(parseMoneyInput(centsToInput(99))).toBe(99);
   });
