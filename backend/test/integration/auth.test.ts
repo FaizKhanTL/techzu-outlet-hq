@@ -1,7 +1,7 @@
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 import jwt from 'jsonwebtoken';
-import { pool } from '../src/db/pool';
-import { loginRateLimitStore } from '../src/modules/auth/auth.routes';
+import { pool } from '../../src/db/pool';
+import { loginRateLimitStore } from '../../src/modules/auth/auth.routes';
 import { api, auth, createOutlet, createUser, PASSWORD, resetDatabase } from './helpers';
 
 beforeEach(async () => {

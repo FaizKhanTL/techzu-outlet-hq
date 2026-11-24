@@ -1,8 +1,8 @@
 import request from 'supertest';
-import { createApp } from '../src/app';
-import { pool } from '../src/db/pool';
-import { hashPassword } from '../src/modules/auth/password';
-import { signAccessToken } from '../src/modules/auth/token';
+import { createApp } from '../../src/app';
+import { pool } from '../../src/db/pool';
+import { hashPassword } from '../../src/modules/auth/password';
+import { signAccessToken } from '../../src/modules/auth/token';
 
 export const app = createApp();
 export const api = () => request(app);

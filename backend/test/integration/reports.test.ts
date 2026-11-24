@@ -1,5 +1,5 @@
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
-import { pool } from '../src/db/pool';
+import { pool } from '../../src/db/pool';
 import {
   api,
   assignItem,

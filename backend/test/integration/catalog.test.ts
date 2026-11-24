@@ -1,5 +1,5 @@
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
-import { pool } from '../src/db/pool';
+import { pool } from '../../src/db/pool';
 import { api, auth, createMenuItem, createOutlet, createUser, resetDatabase } from './helpers';
 
 beforeEach(resetDatabase);
@@ -98,16 +98,13 @@ describe('outlets', () => {
 describe('master menu', () => {
   it('lets HQ create, update and list menu items', async () => {
     const hq = await createUser('HQ_ADMIN');
-    const created = await api()
-      .post('/api/v1/menu-items')
-      .set(auth(hq.token))
-      .send({
-        sku: 'cof-latte',
-        name: 'Latte',
-        category: 'Coffee',
-        basePriceCents: 1200,
-        description: 'Milk',
-      });
+    const created = await api().post('/api/v1/menu-items').set(auth(hq.token)).send({
+      sku: 'cof-latte',
+      name: 'Latte',
+      category: 'Coffee',
+      basePriceCents: 1200,
+      description: 'Milk',
+    });
     expect(created.status).toBe(201);
     expect(created.body.data).toMatchObject({
       sku: 'COF-LATTE',

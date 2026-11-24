@@ -13,11 +13,13 @@
     "start": "node dist/server.js",
     "migrate": "tsx src/db/migrate.ts",
     "seed": "tsx src/db/seed.ts",
-    "test": "vitest run",
-    "test:watch": "vitest",
+    "test": "npm run test:unit && npm run test:integration",
     "lint": "eslint .",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "test:unit": "vitest run --config vitest.unit.config.ts",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "test:coverage": "vitest run --config vitest.unit.config.ts --coverage --coverage.reportsDirectory=coverage/unit && vitest run --config vitest.integration.config.ts --coverage --coverage.reportsDirectory=coverage/integration"
   },
   "dependencies": {
     "cors": "2.8.5",
@@ -38,6 +40,7 @@
     "@types/node": "22.13.1",
     "@types/pg": "8.11.11",
     "@types/supertest": "6.0.2",
+    "@vitest/coverage-v8": "3.0.5",
     "eslint": "9.20.0",
     "eslint-config-prettier": "10.0.1",
     "globals": "15.14.0",

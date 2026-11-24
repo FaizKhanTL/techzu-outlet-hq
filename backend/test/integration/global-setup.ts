@@ -1,5 +1,5 @@
 import { Client } from 'pg';
-import { migrate } from '../src/db/migrate';
+import { migrate } from '../../src/db/migrate';
 
 /** Builds the test schema from the migrations once per run, on a database the tests own. */
 export default async function setup() {

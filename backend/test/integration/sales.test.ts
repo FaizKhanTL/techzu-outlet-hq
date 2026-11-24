@@ -1,6 +1,6 @@
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 import { randomUUID } from 'node:crypto';
-import { pool } from '../src/db/pool';
+import { pool } from '../../src/db/pool';
 import {
   api,
   assignItem,
