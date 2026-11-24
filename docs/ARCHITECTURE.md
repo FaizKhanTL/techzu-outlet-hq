@@ -283,8 +283,11 @@ more, or terminals need to number receipts offline, number per terminal (`KLCC-T
 - Secrets in a secret manager, not in environment files; TLS everywhere; database not reachable from the internet.
 - Observability: the JSON logs already carry a request id end to end (nginx to API to error body); add metrics (sale
   latency, `INSUFFICIENT_STOCK` rate, lock waits, 5xx rate) and tracing (OpenTelemetry), with alerts on them.
-- CI/CD: the pipeline already lints, type-checks, tests against Postgres and builds images; add a deploy step that
-  runs migrations once before rolling out new API instances (migrations are additive so old and new code can overlap).
+- CI/CD: the pipeline already lints, type-checks, runs unit tests, integration tests against Postgres, and end-to-end
+  tests in a browser against the built images; add a deploy step that runs migrations once before rolling out new API
+  instances (migrations are additive so old and new code can overlap).
+- Behind every new proxy layer, recount `TRUST_PROXY_HOPS` so the login limit keeps counting clients (the live demo
+  on Railway needs 3).
 
 ### 5.4 Architectural evolution
 

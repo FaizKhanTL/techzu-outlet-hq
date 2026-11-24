@@ -10,8 +10,10 @@ per outlet) and reads reports. Each outlet sells only what it was assigned and k
 
 ```
 backend/    Express 5 + TypeScript API over PostgreSQL 16
-frontend/   React 19 + Vite + TypeScript (HQ console and outlet POS)
+frontend/   React 19 + Vite + TypeScript (HQ console and outlet POS), served by nginx
+e2e/        Playwright tests against the running stack
 docs/       ARCHITECTURE.md: ERD, flows, scaling, microservices, offline POS
+            DEPLOYMENT.md: the live demo on Railway
 ```
 
 ## Commands
@@ -27,10 +29,12 @@ Run from the folder named.
 | backend | `npm run test:unit` | Unit tests, no database |
 | backend | `npm run test:integration` | Integration tests against a real Postgres (`TEST_DATABASE_URL`, name contains "test") |
 | backend | `npm test` | Both |
-| frontend | `npm test` | Component and unit tests (jsdom) |
-| e2e | `npm test` | Playwright against the running stack (`SEED_DEMO_DATA=true LOGIN_RATE_LIMIT_PER_MINUTE=1000 docker compose up -d --build --wait` first; `E2E_BASE_URL` if not :8080) |
 | backend | `npm run lint && npm run typecheck` | Must pass before a commit |
 | frontend | `npm run dev` / `npm run build` | Vite dev server (proxies `/api`) / production build |
+| frontend | `npm test` | Component and unit tests (jsdom) |
+| frontend | `npm run lint` | Must pass before a commit (the build type-checks) |
+| e2e | `npm test` | Playwright against the running stack (`SEED_DEMO_DATA=true LOGIN_RATE_LIMIT_PER_MINUTE=1000 docker compose up -d --build --wait` first; `E2E_BASE_URL` if not :8080) |
+| root | `railway up backend --path-as-root --service api --ci` (and `frontend` / `web`) | Deploy to the live demo (docs/DEPLOYMENT.md) |
 
 ## Architecture rules (backend)
 
@@ -81,6 +85,16 @@ Run from the folder named.
 - Passwords are hashed with `scrypt` and compared in constant time; login is rate-limited and gives the same error for
   an unknown user and a wrong password.
 - Never log tokens, passwords or full request bodies (`authorization` is redacted in the logger).
+
+## Deployment rules
+
+- The API and the database are never public. The browser reaches the API only through the web container's nginx
+  (`/api`), so production needs no CORS.
+- `TRUST_PROXY_HOPS` must equal the number of proxies in front of the API, or the login rate limit counts a proxy
+  instead of the client. Measure it when the hosting changes: 1 for docker compose, 3 on Railway. Check that the
+  eleventh failed sign-in in a minute gets `429`.
+- Never run the e2e suite against the live demo: it creates items, outlets and sales that would clutter the demo data.
+- Schema changes ship as new migrations; the API applies them on start before it serves.
 
 ## Frontend rules
 

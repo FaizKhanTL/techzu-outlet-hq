@@ -12,7 +12,8 @@ own stock and gets sequential receipt numbers.
 | API | `backend/`: layered (routes → controllers → services → repositories), zod validation, JWT auth |
 | Web | `frontend/`: HQ console and outlet point of sale |
 | Docs | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): ERD, flows, scaling plan, microservices, offline POS and KDS |
-| Deploy | [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) |
+| Live demo | https://outlet-hq.up.railway.app (demo accounts below; password `Password123!`) |
+| Deploy | [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md): how the live demo runs on Railway |
 | Rules for contributors | [CLAUDE.md](CLAUDE.md) |
 
 ## Contents
@@ -298,9 +299,10 @@ section 7 of the architecture document; the API's idempotency keys and UUIDs are
 .
 ├── CLAUDE.md                     rules for working on this codebase
 ├── docker-compose.yml            Postgres + API + web
+├── .github/workflows/ci.yml      lint, types, unit, integration and e2e tests on every push
 ├── docs/
 │   ├── ARCHITECTURE.md           ERD, flows, scaling, microservices, offline POS/KDS
-│   └── DEPLOYMENT.md             how to run it on a server with HTTPS
+│   └── DEPLOYMENT.md             the live demo on Railway
 ├── backend/
 │   ├── migrations/               SQL migrations, applied in order, checksummed
 │   ├── src/
@@ -311,14 +313,17 @@ section 7 of the architecture document; the API's idempotency keys and UUIDs are
 │   │   ├── modules/              auth, outlets, menu-items, outlet-menu, inventory, sales, reports
 │   │   ├── app.ts                the Express app
 │   │   └── server.ts             start-up and graceful shutdown
-│   └── test/                     unit/ (no database) and integration/ (real Postgres)
-└── frontend/
-    ├── src/
-    │   ├── api/                  client, types, TanStack Query hooks
-    │   ├── auth/                 auth context
-    │   ├── components/           layout, shared UI, stock form, top-items table
-    │   ├── lib/                  money, dates, POS cart (with tests)
-    │   └── pages/                login, hq/*, outlet/*
-    └── nginx.conf.template       production web server
-e2e/                              Playwright tests against the running stack
+│   ├── test/                     unit/ (no database) and integration/ (real Postgres)
+│   └── railway.json              Railway build and health check
+├── frontend/
+│   ├── src/
+│   │   ├── api/                  client, types, TanStack Query hooks
+│   │   ├── auth/                 auth context
+│   │   ├── components/           layout, shared UI, stock form, top-items table
+│   │   ├── lib/                  money, dates, POS cart
+│   │   ├── pages/                login, hq/*, outlet/* (component tests beside them)
+│   │   └── test/                 test setup, renderWithProviders, fakeApi
+│   ├── nginx.conf.template       production web server
+│   └── railway.json              Railway build and health check
+└── e2e/                          Playwright tests against the running stack
 ```
