@@ -34,6 +34,9 @@ describe('lists, filters and pages', () => {
     expect(first.body.data.map((s: { receiptSeq: number }) => s.receiptSeq)).toEqual([5, 4]);
     const last = await api().get(`${url}?limit=2&offset=4`).set(auth(staff.token));
     expect(last.body.data.map((s: { receiptSeq: number }) => s.receiptSeq)).toEqual([1]);
+    // Receipts 1 and 2 now share a timestamp; the order must still be the receipt order, every time.
+    const all = await api().get(url).set(auth(staff.token));
+    expect(all.body.data.map((s: { receiptSeq: number }) => s.receiptSeq)).toEqual([5, 4, 3, 2, 1]);
 
     const march = await api()
       .get(`${url}?from=2026-03-01T00:00:00Z&to=2026-03-02T00:00:00Z`)

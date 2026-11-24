@@ -145,8 +145,10 @@ export async function listSales(
                    AND ($3::timestamptz IS NULL OR s.created_at < $3)`;
   const params = [outletId, filter.from ?? null, filter.to ?? null];
   const [items, count] = await Promise.all([
+    // Newest first by receipt number: the outlet's counter is the order sales really happened in. created_at is the
+    // transaction start, so two sales can share it, or (two tills at once) come out of receipt order.
     db.query<Sale>(
-      `SELECT ${SALE_COLUMNS} FROM sales s ${where} ORDER BY s.created_at DESC, s.id DESC LIMIT $4 OFFSET $5`,
+      `SELECT ${SALE_COLUMNS} FROM sales s ${where} ORDER BY s.receipt_seq DESC LIMIT $4 OFFSET $5`,
       [...params, filter.limit, filter.offset],
     ),
     db.query<{ total: number }>(`SELECT count(*)::int AS total FROM sales s ${where}`, params),
