@@ -1,4 +1,5 @@
 import type { Queryable } from '../../db/pool';
+import { escapeLike } from '../../lib/sql';
 
 export interface MenuItem {
   id: string;
@@ -78,10 +79,14 @@ export async function listMenuItems(
   db: Queryable,
   filter: { limit: number; offset: number; search?: string; category?: string; isActive?: boolean },
 ) {
-  const where = `WHERE ($1::text IS NULL OR m.sku ILIKE '%' || $1 || '%' OR m.name ILIKE '%' || $1 || '%')
+  const where = `WHERE ($1::text IS NULL OR m.sku ILIKE '%' || $1 || '%' ESCAPE '\\' OR m.name ILIKE '%' || $1 || '%' ESCAPE '\\')
                    AND ($2::text IS NULL OR m.category = $2)
                    AND ($3::boolean IS NULL OR m.is_active = $3)`;
-  const params = [filter.search ?? null, filter.category ?? null, filter.isActive ?? null];
+  const params = [
+    filter.search === undefined ? null : escapeLike(filter.search),
+    filter.category ?? null,
+    filter.isActive ?? null,
+  ];
   const [items, count] = await Promise.all([
     db.query<MenuItem>(
       `SELECT ${COLUMNS} FROM menu_items m ${where} ORDER BY m.category, m.name, m.id LIMIT $4 OFFSET $5`,

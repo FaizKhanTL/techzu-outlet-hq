@@ -1,4 +1,5 @@
 import type { Queryable } from '../../db/pool';
+import { escapeLike } from '../../lib/sql';
 
 export interface Outlet {
   id: string;
@@ -50,9 +51,12 @@ export async function listOutlets(
   db: Queryable,
   filter: { limit: number; offset: number; search?: string; isActive?: boolean },
 ) {
-  const where = `WHERE ($1::text IS NULL OR code ILIKE '%' || $1 || '%' OR name ILIKE '%' || $1 || '%')
+  const where = `WHERE ($1::text IS NULL OR code ILIKE '%' || $1 || '%' ESCAPE '\\' OR name ILIKE '%' || $1 || '%' ESCAPE '\\')
                    AND ($2::boolean IS NULL OR is_active = $2)`;
-  const params = [filter.search ?? null, filter.isActive ?? null];
+  const params = [
+    filter.search === undefined ? null : escapeLike(filter.search),
+    filter.isActive ?? null,
+  ];
   const [items, count] = await Promise.all([
     db.query<Outlet>(`SELECT ${COLUMNS} FROM outlets ${where} ORDER BY code LIMIT $3 OFFSET $4`, [
       ...params,
