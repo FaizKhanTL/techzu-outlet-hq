@@ -83,7 +83,8 @@ Run from the folder named.
 
 ## Security rules
 
-- Every route except `/health`, `/ready` and `POST /api/v1/auth/login` requires a JWT.
+- Every route except `/health`, `/ready`, `POST /api/v1/auth/login` and the API docs (`/api/docs`,
+  `/api/openapi.json`, off with `API_DOCS_ENABLED=false`) requires a JWT.
 - Authorise by role and by outlet: `OUTLET_STAFF` can only read or write their own `outletId`; HQ-only routes use
   `authorize('HQ_ADMIN')`. Check the outlet scope in the route, not in the UI.
 - Passwords are hashed with `scrypt` and compared in constant time; login is rate-limited and gives the same error for

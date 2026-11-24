@@ -1,8 +1,9 @@
 # Deployment on Railway
 
-Live at https://outlet-hq.up.railway.app. Three services in one Railway project, all in Southeast Asia (Singapore):
-`Postgres` (Railway's template), `api` (`backend/Dockerfile`) and `web` (`frontend/Dockerfile`, nginx). Only `web` has
-a public domain; it forwards `/api` to the API over Railway's private network, exactly as in docker compose.
+Live at https://outlet-hq.up.railway.app, API docs at https://outlet-hq.up.railway.app/api/docs. Three services in one
+Railway project, all in Southeast Asia (Singapore): `Postgres` (Railway's template), `api` (`backend/Dockerfile`) and
+`web` (`frontend/Dockerfile`, nginx). Only `web` has a public domain; it forwards `/api` to the API over Railway's
+private network, exactly as in docker compose.
 `backend/railway.json` and `frontend/railway.json` set the Dockerfile builder, the region and the health checks
 (`/ready` for the API, so a deploy goes live only when the database answers).
 
