@@ -36,8 +36,9 @@ const schema = z.object({
 
 export type Env = z.infer<typeof schema>;
 
-function load(): Env {
-  const parsed = schema.safeParse(process.env);
+/** Validates a set of variables; throws one error listing every problem. Exported for tests. */
+export function parseEnv(source: NodeJS.ProcessEnv): Env {
+  const parsed = schema.safeParse(source);
   if (!parsed.success) {
     const problems = parsed.error.issues
       .map((issue) => `  ${issue.path.join('.')}: ${issue.message}`)
@@ -48,5 +49,5 @@ function load(): Env {
   return parsed.data;
 }
 
-export const env: Env = load();
+export const env: Env = parseEnv(process.env);
 export const isProduction = env.NODE_ENV === 'production';

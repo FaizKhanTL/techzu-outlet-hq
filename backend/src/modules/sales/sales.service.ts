@@ -1,4 +1,3 @@
-import { createHash } from 'node:crypto';
 import { pool } from '../../db/pool';
 import { withTransaction } from '../../db/transaction';
 import { env } from '../../config/env';
@@ -6,7 +5,7 @@ import { ConflictError, NotFoundError, UnprocessableError } from '../../lib/erro
 import { findOutletById } from '../outlets/outlets.repository';
 import { applyStockDeltas, insertMovements, lockStock } from '../inventory/inventory.repository';
 import type { AuthContext } from '../auth/auth.types';
-import { MAX_LINE_QUANTITY } from './sales.schemas';
+import { formatReceiptNumber, hashSaleRequest, mergeLines } from './sales.logic';
 import * as repo from './sales.repository';
 
 export interface CreateSaleInput {
@@ -14,29 +13,6 @@ export interface CreateSaleInput {
   paymentMethod: 'CASH' | 'CARD' | 'E_WALLET';
   note: string | null;
 }
-
-/** The same item twice in one sale becomes one line, so the stock check and the receipt see one quantity. */
-function mergeLines(items: CreateSaleInput['items']) {
-  const quantities = new Map<string, number>();
-  for (const item of items)
-    quantities.set(item.menuItemId, (quantities.get(item.menuItemId) ?? 0) + item.quantity);
-  const merged = [...quantities].map(([menuItemId, quantity]) => ({ menuItemId, quantity }));
-  const tooMany = merged.filter((line) => line.quantity > MAX_LINE_QUANTITY);
-  if (tooMany.length > 0) {
-    throw new UnprocessableError(
-      `At most ${MAX_LINE_QUANTITY} of one item per sale.`,
-      tooMany.map((line) => ({ menuItemId: line.menuItemId, quantity: line.quantity })),
-      'LINE_QUANTITY_TOO_HIGH',
-    );
-  }
-  return merged.sort((a, b) => a.menuItemId.localeCompare(b.menuItemId));
-}
-
-/** Fingerprint of what was asked for, so a reused Idempotency-Key with a different sale can be refused. */
-const hashRequest = (lines: { menuItemId: string; quantity: number }[], input: CreateSaleInput) =>
-  createHash('sha256')
-    .update(JSON.stringify({ lines, paymentMethod: input.paymentMethod, note: input.note }))
-    .digest('hex');
 
 const withCurrency = (sale: repo.Sale) => ({ ...sale, currency: env.CURRENCY });
 
@@ -66,7 +42,7 @@ export async function createSale(
   idempotencyKey?: string,
 ): Promise<{ sale: ReturnType<typeof withCurrency>; replayed: boolean }> {
   const lines = mergeLines(input.items);
-  const requestHash = idempotencyKey ? hashRequest(lines, input) : null;
+  const requestHash = idempotencyKey ? hashSaleRequest(lines, input) : null;
 
   if (idempotencyKey) {
     const previous = await replay(outletId, idempotencyKey, requestHash!);
@@ -150,7 +126,7 @@ export async function createSale(
       const saleId = await repo.insertSale(client, {
         outletId,
         receiptSeq,
-        receiptNumber: `${outlet.code}-${String(receiptSeq).padStart(6, '0')}`,
+        receiptNumber: formatReceiptNumber(outlet.code, receiptSeq),
         totalCents: saleLines.reduce((sum, line) => sum + line.lineTotalCents, 0),
         itemCount: saleLines.reduce((sum, line) => sum + line.quantity, 0),
         paymentMethod: input.paymentMethod,
