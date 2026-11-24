@@ -24,7 +24,11 @@ Run from the folder named.
 | root | `docker compose run --rm api node dist/db/seed.js` | Load demo data |
 | backend | `npm run dev` | API with reload (needs `DATABASE_URL`) |
 | backend | `npm run migrate` / `npm run seed` | Apply migrations / load demo data |
-| backend | `npm test` | Integration tests against a real Postgres (`TEST_DATABASE_URL`) |
+| backend | `npm run test:unit` | Unit tests, no database |
+| backend | `npm run test:integration` | Integration tests against a real Postgres (`TEST_DATABASE_URL`, name contains "test") |
+| backend | `npm test` | Both |
+| frontend | `npm test` | Component and unit tests (jsdom) |
+| e2e | `npm test` | Playwright against the running stack (`SEED_DEMO_DATA=true LOGIN_RATE_LIMIT_PER_MINUTE=1000 docker compose up -d --build --wait` first; `E2E_BASE_URL` if not :8080) |
 | backend | `npm run lint && npm run typecheck` | Must pass before a commit |
 | frontend | `npm run dev` / `npm run build` | Vite dev server (proxies `/api`) / production build |
 
@@ -88,11 +92,18 @@ Run from the folder named.
 
 ## Testing rules
 
-- Backend tests are integration tests against a real Postgres (no mocked database): `backend/test`. Each test starts
-  from an empty schema state (`resetDatabase`).
+- Pick the lowest layer that can prove the rule:
+  - **Unit** (`backend/test/unit`, `frontend/src/**/*.test.ts(x)`): pure logic, middleware, services with mocked
+    repositories, components with `renderWithProviders` and `fakeApi`. No database, no network.
+  - **Integration** (`backend/test/integration`): anything that depends on SQL, transactions, locks or constraints,
+    through the real app and a real Postgres. Each test starts from empty tables (`resetDatabase`). Never mock the
+    database here.
+  - **End-to-end** (`e2e/tests`): a user journey across nginx, the web app and the API. Set data up through the `Api`
+    helper and keep names unique (`unique()`), so the suite can rerun on the same database. Few and focused.
 - Every business rule above has a test, including concurrency: parallel sales must give unique, gap-free receipt
   numbers and must never oversell.
-- A bug fix comes with the test that would have caught it.
+- Lists that page must have a total, stable order (a unique tie-breaker), or pages repeat and skip rows.
+- A bug fix comes with the test that would have caught it, and that test must fail without the fix.
 
 ## Style
 

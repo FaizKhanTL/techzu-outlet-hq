@@ -62,11 +62,47 @@ jobs:
       - run: npm test
       - run: npm run build
 
-  images:
-    name: Docker images build
+  e2e:
+    name: End-to-end (docker compose + Playwright)
     runs-on: ubuntu-latest
     needs: [api, web]
+    timeout-minutes: 20
+    env:
+      # Throwaway values for a stack that lives only for this job.
+      POSTGRES_PASSWORD: e2e-only-password
+      JWT_SECRET: e2e-only-secret-at-least-32-characters-long
+      SEED_DEMO_DATA: 'true'
+      # The suite signs in more often than the production limit of 10 a minute allows.
+      LOGIN_RATE_LIMIT_PER_MINUTE: '1000'
+      WEB_PORT: '8080'
+      E2E_BASE_URL: http://localhost:8080
     steps:
       - uses: actions/checkout@v4
-      - run: docker build -t outlet-hq-api ./backend
-      - run: docker build -t outlet-hq-web ./frontend
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: e2e/package-lock.json
+      # Builds both production images, then waits until every service reports healthy.
+      - run: docker compose up -d --build --wait --wait-timeout 180
+      - run: npm ci
+        working-directory: e2e
+      - run: npm run typecheck
+        working-directory: e2e
+      - run: npx playwright install --with-deps chromium
+        working-directory: e2e
+      - run: npm test
+        working-directory: e2e
+      - if: failure()
+        run: docker compose logs --no-color > compose.log
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-report
+          path: |
+            e2e/playwright-report
+            e2e/test-results
+            compose.log
+          retention-days: 7
+      - if: always()
+        run: docker compose down -v

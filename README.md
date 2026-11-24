@@ -107,23 +107,48 @@ A throwaway database for both: `docker compose up -d db` and use
 
 ## Tests
 
+Three layers, each with its own job:
+
+| Layer | Where | Runs against | Count |
+|---|---|---|---|
+| Unit | `backend/test/unit`, `frontend/src/**/*.test.ts(x)` | Nothing: pure logic, mocked repositories, components in jsdom with a fake `fetch` | 101 API + 30 web |
+| Integration | `backend/test/integration` | The real Express app and a real Postgres | 55 |
+| End-to-end | `e2e/tests` | The running Docker stack, driven in Chromium by Playwright | 15 |
+
 ```bash
 cd backend
+npm run test:unit               # no database needed
 # A database the tests may wipe; its name must contain "test".
 export TEST_DATABASE_URL=postgres://outlet_hq:outlet_hq@localhost:5432/outlet_hq_test
-npm test                        # 47 integration tests against real Postgres
+npm run test:integration
+npm test                        # both
+npm run test:coverage           # unit coverage report
 npm run lint && npm run typecheck
 
 cd ../frontend
-npm test                        # unit tests (money parsing, the POS cart)
+npm test                        # pages, forms, API client, money, dates, POS cart
 npm run lint && npm run build
+
+# End-to-end: start the stack with demo data and a login limit the suite will not trip, then run Playwright.
+cd ..
+SEED_DEMO_DATA=true LOGIN_RATE_LIMIT_PER_MINUTE=1000 docker compose up -d --build --wait
+cd e2e && npm ci && npx playwright install chromium
+npm test                        # E2E_BASE_URL defaults to http://localhost:8080
 ```
+
+The e2e tests create their own items and outlets with unique names, so they can run again and again on the same
+database. They cover sign-in and role guards (including the return to a deep link), selling at an outlet's own price
+with a receipt and the stock update, sold out, two tills racing for the last item, pausing an item, outlet isolation,
+HQ creating, pricing and stocking an item that a till then sells, outlets, the dashboard, nginx's security headers and
+SPA fallback, the error shape and idempotent retries.
 
 The backend tests rebuild the schema from the migrations, empty every table before each test and cover: auth and
 role/outlet scoping, validation and error formats, menu assignment and outlet prices, stock adjustments, sales,
 idempotency, reports, and concurrency (40 parallel sales give receipts 1 to 40 with no gaps; 30 parallel sales against
 10 in stock give exactly 10 sales; opposite item order does not deadlock; outlets number independently). CI runs all
-of it on every push (`.github/workflows/ci.yml`).
+of it on every push (`.github/workflows/ci.yml`): lint, types and tests for the API and the web app, then the e2e job
+builds both images, starts the stack with `docker compose up --wait` and runs Playwright (report and logs are uploaded
+when it fails).
 
 ## API endpoints
 
@@ -286,7 +311,7 @@ section 7 of the architecture document; the API's idempotency keys and UUIDs are
 │   │   ├── modules/              auth, outlets, menu-items, outlet-menu, inventory, sales, reports
 │   │   ├── app.ts                the Express app
 │   │   └── server.ts             start-up and graceful shutdown
-│   └── test/                     integration tests (real Postgres)
+│   └── test/                     unit/ (no database) and integration/ (real Postgres)
 └── frontend/
     ├── src/
     │   ├── api/                  client, types, TanStack Query hooks
@@ -295,4 +320,5 @@ section 7 of the architecture document; the API's idempotency keys and UUIDs are
     │   ├── lib/                  money, dates, POS cart (with tests)
     │   └── pages/                login, hq/*, outlet/*
     └── nginx.conf.template       production web server
+e2e/                              Playwright tests against the running stack
 ```
