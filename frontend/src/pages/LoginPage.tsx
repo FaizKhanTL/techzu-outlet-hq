@@ -19,7 +19,15 @@ export function LoginPage() {
   const [error, setError] = useState<unknown>(null);
   const [pending, setPending] = useState(false);
 
-  if (user) return <Navigate to="/" replace />;
+  // Where the guard sent the visitor from. Only same-app paths, so a crafted link cannot send them elsewhere.
+  const requested = (location.state as { from?: unknown } | null)?.from;
+  const from =
+    typeof requested === 'string' && requested.startsWith('/') && !requested.startsWith('//')
+      ? requested
+      : '/';
+
+  // Also runs on the render right after login() sets the user, so it must keep the requested page too.
+  if (user) return <Navigate to={from} replace />;
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -27,8 +35,7 @@ export function LoginPage() {
     setError(null);
     try {
       await login(email, password);
-      const from = (location.state as { from?: string } | null)?.from;
-      navigate(from ?? '/', { replace: true });
+      navigate(from, { replace: true });
     } catch (err) {
       setError(err);
     } finally {

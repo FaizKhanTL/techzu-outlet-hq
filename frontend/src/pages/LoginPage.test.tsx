@@ -5,14 +5,24 @@ import { LoginPage } from './LoginPage';
 import { ApiError } from '../api/client';
 import { renderWithProviders } from '../test/utils';
 
+const routes = (
+  <Routes>
+    <Route path="/login" element={<LoginPage />} />
+    <Route path="/" element={<p>home page</p>} />
+    <Route path="/outlet/inventory" element={<p>inventory page</p>} />
+  </Routes>
+);
+
+/**
+ * The page signed in, on /login, sent there from `from`. In the browser this render is what decides where a fresh
+ * sign-in lands: login() sets the user at once, but React Router applies navigate() as a transition, so this render
+ * commits first.
+ */
+const renderSignedInFrom = (from: unknown) =>
+  renderWithProviders(routes, { route: { pathname: '/login', state: { from } } });
+
 const renderLogin = (login = vi.fn()) =>
-  renderWithProviders(
-    <Routes>
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/" element={<p>home page</p>} />
-    </Routes>,
-    { user: null, route: '/login', login },
-  );
+  renderWithProviders(routes, { user: null, route: '/login', login });
 
 const fillAndSubmit = (email: string, password: string) => {
   fireEvent.change(screen.getByLabelText('Email'), { target: { value: email } });
@@ -55,4 +65,22 @@ describe('LoginPage', () => {
       false,
     );
   });
+
+  it('sends a signed-in visitor on to the page the guard sent them from', () => {
+    renderSignedInFrom('/outlet/inventory');
+    expect(screen.getByText('inventory page')).toBeTruthy();
+  });
+
+  it('sends a signed-in visitor home when there is no requested page', () => {
+    renderWithProviders(routes, { route: '/login' });
+    expect(screen.getByText('home page')).toBeTruthy();
+  });
+
+  it.each([['//evil.example'], ['https://evil.example'], [42]])(
+    'ignores a requested page that is not a path in the app (%s)',
+    (from) => {
+      renderSignedInFrom(from);
+      expect(screen.getByText('home page')).toBeTruthy();
+    },
+  );
 });

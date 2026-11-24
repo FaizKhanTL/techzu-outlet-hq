@@ -1,7 +1,7 @@
 import type { ReactElement, ReactNode } from 'react';
 import { render } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, type InitialEntry } from 'react-router-dom';
 import { vi } from 'vitest';
 import { AuthContext, type AuthState } from '../auth/context';
 import type { User } from '../api/types';
@@ -18,7 +18,11 @@ export const staffUser: User = {
 /** Renders with a fresh query cache, a router and (optionally) a signed-in user. */
 export function renderWithProviders(
   ui: ReactElement,
-  { user = staffUser as User | null, route = '/', login = vi.fn() as AuthState['login'] } = {},
+  {
+    user = staffUser as User | null,
+    route = '/' as InitialEntry,
+    login = vi.fn() as AuthState['login'],
+  } = {},
 ) {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
