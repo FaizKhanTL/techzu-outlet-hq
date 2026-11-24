@@ -18,7 +18,8 @@ export function TopItemsTable({ outlet }: { outlet: TopItemsReport['outlets'][nu
           <tr key={item.menuItemId}>
             <td>{item.rank}</td>
             <td>
-              {item.name} <small className="muted">{item.sku}</small>
+              {item.name}
+              <small className="muted sku">{item.sku}</small>
             </td>
             <td className="num">{item.quantitySold}</td>
             <td className="num">

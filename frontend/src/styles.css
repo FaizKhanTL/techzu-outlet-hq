@@ -68,6 +68,12 @@ a:hover {
   color: var(--muted);
 }
 
+.sku {
+  display: block;
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
 .mono {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 0.9em;
@@ -228,7 +234,7 @@ a:hover {
   gap: 4px;
 }
 
-.kpi span {
+.kpi > span {
   color: var(--muted);
   font-size: 0.85rem;
 }
