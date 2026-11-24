@@ -30,8 +30,8 @@ jobs:
     env:
       TEST_DATABASE_URL: postgres://outlet_hq:outlet_hq@localhost:5432/outlet_hq_test
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -50,8 +50,8 @@ jobs:
       run:
         working-directory: frontend
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -64,7 +64,9 @@ jobs:
 
   e2e:
     name: End-to-end (docker compose + Playwright)
-    runs-on: ubuntu-latest
+    # Pinned: Playwright installs browser dependencies only for the Ubuntu releases it supports, and ubuntu-latest
+    # moved past them. Move this together with a Playwright upgrade.
+    runs-on: ubuntu-24.04
     needs: [api, web]
     timeout-minutes: 20
     env:
@@ -77,8 +79,8 @@ jobs:
       WEB_PORT: '8080'
       E2E_BASE_URL: http://localhost:8080
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -96,7 +98,7 @@ jobs:
       - if: failure()
         run: docker compose logs --no-color > compose.log
       - if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: e2e-report
           path: |
