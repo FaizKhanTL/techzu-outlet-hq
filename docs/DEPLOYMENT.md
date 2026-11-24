@@ -82,3 +82,4 @@ The two images also run on container platforms (Render, Railway, Fly.io, Google 
 | `SEED_DEMO_DATA` | | `false` | Load demo data on start when the database has no users |
 | `DATABASE_POOL_MAX` | | `10` | Connections per API instance |
 | `LOG_LEVEL` | | `info` | `fatal` to `trace`, or `silent` |
+| `LOGIN_RATE_LIMIT_PER_MINUTE` | | `10` | Sign-in attempts per client address per minute; raise it only for test stacks |

@@ -34,6 +34,7 @@ services:
       # One proxy (the web container's nginx) sits in front.
       TRUST_PROXY_HOPS: 1
       RUN_MIGRATIONS: 'true'
+      LOGIN_RATE_LIMIT_PER_MINUTE: ${LOGIN_RATE_LIMIT_PER_MINUTE:-10}
       SEED_DEMO_DATA: ${SEED_DEMO_DATA:-false}
     ports:
       - '${API_PORT:-3000}:3000'

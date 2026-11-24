@@ -17,6 +17,7 @@ describe('parseEnv', () => {
       RUN_MIGRATIONS: false,
       SEED_DEMO_DATA: false,
       TRUST_PROXY_HOPS: 1,
+      LOGIN_RATE_LIMIT_PER_MINUTE: 10,
     });
   });
 
@@ -53,6 +54,17 @@ describe('parseEnv', () => {
       'JWT_EXPIRES_IN',
     ]) {
       expect(message).toContain(problem);
+    }
+  });
+
+  it('takes a login rate limit only as a positive whole number', () => {
+    expect(
+      parseEnv({ ...minimal, LOGIN_RATE_LIMIT_PER_MINUTE: '1000' }).LOGIN_RATE_LIMIT_PER_MINUTE,
+    ).toBe(1000);
+    for (const bad of ['0', '-1', '2.5', 'many']) {
+      expect(() => parseEnv({ ...minimal, LOGIN_RATE_LIMIT_PER_MINUTE: bad })).toThrow(
+        /LOGIN_RATE_LIMIT_PER_MINUTE/,
+      );
     }
   });
 
