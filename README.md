@@ -13,6 +13,7 @@ own stock and gets sequential receipt numbers.
 | Web | `frontend/`: HQ console and outlet point of sale |
 | Docs | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): ERD, flows, scaling plan, microservices, offline POS and KDS |
 | Live demo | https://outlet-hq.up.railway.app (demo accounts below; password `Password123!`) |
+| API docs | https://outlet-hq.up.railway.app/api/docs (Swagger UI; OpenAPI 3.1 at `/api/openapi.json`) |
 | Deploy | [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md): how the live demo runs on Railway |
 | Rules for contributors | [CLAUDE.md](CLAUDE.md) |
 
@@ -65,6 +66,7 @@ docker compose up --build
 
 - Web app: http://localhost:8080 (`WEB_PORT` in `.env`)
 - API: http://localhost:3000/api/v1 (`API_PORT`), health at `/health` and `/ready`
+- API docs: http://localhost:8080/api/docs (Swagger UI: sign in with `POST /auth/login`, then **Authorize**)
 
 The API applies migrations on start. With `SEED_DEMO_DATA=true` (the default in `.env.example`) it also loads demo
 data the first time, when the database has no users: three outlets, ten menu items, assignments with some outlet
@@ -112,9 +114,9 @@ Three layers, each with its own job:
 
 | Layer | Where | Runs against | Count |
 |---|---|---|---|
-| Unit | `backend/test/unit`, `frontend/src/**/*.test.ts(x)` | Nothing: pure logic, mocked repositories, components in jsdom with a fake `fetch` | 101 API + 30 web |
-| Integration | `backend/test/integration` | The real Express app and a real Postgres | 55 |
-| End-to-end | `e2e/tests` | The running Docker stack, driven in Chromium by Playwright | 15 |
+| Unit | `backend/test/unit`, `frontend/src/**/*.test.ts(x)` | Nothing: pure logic, mocked repositories, components in jsdom with a fake `fetch` | 107 API + 30 web |
+| Integration | `backend/test/integration` | The real Express app and a real Postgres, including the API contract | 62 |
+| End-to-end | `e2e/tests` | The running Docker stack, driven in Chromium by Playwright | 16 |
 
 ```bash
 cd backend
@@ -141,7 +143,7 @@ The e2e tests create their own items and outlets with unique names, so they can 
 database. They cover sign-in and role guards (including the return to a deep link), selling at an outlet's own price
 with a receipt and the stock update, sold out, two tills racing for the last item, pausing an item, outlet isolation,
 HQ creating, pricing and stocking an item that a till then sells, outlets, the dashboard, nginx's security headers and
-SPA fallback, the error shape and idempotent retries.
+SPA fallback, the error shape, idempotent retries, and the Swagger UI calling the API.
 
 The backend tests rebuild the schema from the migrations, empty every table before each test and cover: auth and
 role/outlet scoping, validation and error formats, menu assignment and outlet prices, stock adjustments, sales,
@@ -152,6 +154,12 @@ builds both images, starts the stack with `docker compose up --wait` and runs Pl
 when it fails).
 
 ## API endpoints
+
+Interactive documentation: **`/api/docs`** (Swagger UI, [live](https://outlet-hq.up.railway.app/api/docs)); the
+OpenAPI 3.1 document is at `/api/openapi.json`. It is generated from the same zod schemas that validate requests, and
+the tests keep it honest: every route the app serves must be documented, and every documented operation is called
+against a real database with its status and body checked against the documented schema. Set `API_DOCS_ENABLED=false`
+to turn it off.
 
 Base path `/api/v1`. All endpoints except login need `Authorization: Bearer <token>`. Request and response bodies are
 JSON; amounts are integer cents. Success: `{ "data": ... }`, lists add `"meta": { "limit", "offset", "total" }`.
@@ -308,6 +316,7 @@ section 7 of the architecture document; the API's idempotency keys and UUIDs are
 │   ├── src/
 │   │   ├── config/               validated environment
 │   │   ├── db/                   pool, transactions, migration runner, demo seed
+│   │   ├── docs/                 OpenAPI document and response schemas (Swagger UI at /api/docs)
 │   │   ├── lib/                  errors, pg error mapping, shared schemas, logger
 │   │   ├── middleware/           request id, validation, auth, errors
 │   │   ├── modules/              auth, outlets, menu-items, outlet-menu, inventory, sales, reports

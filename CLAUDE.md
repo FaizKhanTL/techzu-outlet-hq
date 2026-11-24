@@ -55,7 +55,11 @@ Run from the folder named.
    middleware formats every error as `{ "error": { "code", "message", "details?", "requestId" } }`. Unknown errors
    become a generic 500 and are logged, never echoed.
 5. **Success bodies** are `{ "data": ... }`, lists `{ "data": [...], "meta": { "limit", "offset", "total" } }`.
-6. **Configuration** comes only from `src/config/env.ts` (zod-validated at start-up; the process refuses to start on a
+6. **Every route is documented** in `src/docs/openapi.ts` (its request schemas imported from the module's
+   `*.schemas.ts`, never copied) with response schemas in `src/docs/schemas.ts`. Adding or changing a route, a
+   response field or a status code means changing the documentation in the same commit; the OpenAPI unit test and
+   the contract test fail otherwise.
+7. **Configuration** comes only from `src/config/env.ts` (zod-validated at start-up; the process refuses to start on a
    bad value). No `process.env` anywhere else.
 
 ## Data rules

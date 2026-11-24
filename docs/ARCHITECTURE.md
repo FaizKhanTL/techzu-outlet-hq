@@ -47,6 +47,7 @@ flowchart LR
 backend/src
   config/env.ts         every setting, validated with zod at start-up (the process refuses a bad value)
   db/                   pool, withTransaction (retries deadlocks, sets lock/statement timeouts), migrations, seed
+  docs/                 OpenAPI 3.1 document built from the request schemas, served with Swagger UI at /api/docs
   lib/                  AppError classes, pg error mapping, shared zod schemas, logger
   middleware/           request id, validate (zod), authenticate / authorize / requireOutletAccess, error handler
   modules/<name>/       routes → controller → service → repository, one folder per business area
