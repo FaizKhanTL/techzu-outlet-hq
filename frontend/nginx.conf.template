@@ -8,8 +8,13 @@ server {
   gzip_types text/css application/javascript application/json image/svg+xml;
 
   # The API is served from the same origin, so the browser needs no CORS. Its own security headers come from the API.
+  # Resolve the API's name again every 10 s rather than once at start: a redeployed or recreated API gets a new
+  # address (Docker, Railway). A variable in proxy_pass is what makes nginx use the resolver.
+  resolver ${NGINX_LOCAL_RESOLVERS} valid=10s;
+
   location /api/ {
-    proxy_pass ${API_UPSTREAM};
+    set $api_upstream ${API_UPSTREAM};
+    proxy_pass $api_upstream;
     proxy_http_version 1.1;
     proxy_set_header Host $host;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
